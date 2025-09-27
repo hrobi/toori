@@ -1,6 +1,6 @@
 {
   "name": "toori",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "An extensible, convinient typescript library for various pattern matching.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,17 +8,20 @@
     "/dist"
   ],
   "scripts": {
-    "test": "mocha",
+    "test": "jest",
     "build": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hrobi/complete-match.git"
+    "url": "git+https://github.com/hrobi/toori.git"
   },
   "keywords": [
     "pattern",
     "matching",
     "discriminated",
+    "http response match",
+    "match",
+    "exhaustive",
     "union",
     "type",
     "safety"
@@ -26,9 +29,9 @@
   "author": "Róbert Horváth",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hrobi/complete-match/issues"
+    "url": "https://github.com/hrobi/toori/issues"
   },
-  "homepage": "https://github.com/hrobi/complete-match#readme",
+  "homepage": "https://github.com/hrobi/toori#readme",
   "prettier": {
     "trailingComma": "es5",
     "objectWrap": "preserve",
