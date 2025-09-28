@@ -21,13 +21,15 @@ describe("matchOn wheather type", () => {
     matchOn(
       wheather,
       "type"
-    )({
-      cloudy: ({ chanceOfRain }) => chanceOfRain < 0.5,
-      overcast: ({ chanceOfRain }) => chanceOfRain < 0.5,
-      rainy: just(false),
-      stormy: just(false),
-      sunny: ({ extremeHeat }) => !extremeHeat,
-    })
+    )(
+      total({
+        cloudy: ({ chanceOfRain }) => chanceOfRain < 0.5,
+        overcast: ({ chanceOfRain }) => chanceOfRain < 0.5,
+        rainy: just(false),
+        stormy: just(false),
+        sunny: ({ extremeHeat }) => !extremeHeat,
+      })
+    )
   );
 
   const shouldIBike_cases = wheatherSituations.map((wheather) =>
@@ -41,7 +43,7 @@ describe("matchOn wheather type", () => {
   const shouldIBike_mixed = wheatherSituations.map((wheather) =>
     matchOn(wheather, "type")(
       cases("cloudy", "overcast", ({ chanceOfRain }) => chanceOfRain < 0.5),
-      cases("rainy", "stormy", just(false)),
+      cases("rainy", "stormy", () => false),
       total({
         sunny: ({ extremeHeat }) => !extremeHeat,
       })
