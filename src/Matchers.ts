@@ -1,5 +1,6 @@
 import { evertUnion } from "./internal/Utils";
 import { createKeyMatcherConstrainedFlow } from "./KeyMatcherFlow";
+import { UnexpectedNonExhaustiveMatchError } from "./KeyMatchers";
 
 /**
  * Discriminated union matchers
@@ -31,18 +32,34 @@ export const matchHttpResponse = <
   data: unknown;
   error: unknown;
   response: Response;
-}) =>
-  createKeyMatcherConstrainedFlow(
-    {
-      [response.status]: {
-        body: response.status >= 200 && response.status < 300 ? data : error,
-        response,
+}) => {
+  try {
+    return createKeyMatcherConstrainedFlow(
+      {
+        [response.status]: {
+          body: response.status >= 200 && response.status < 300 ? data : error,
+          response,
+        },
+      } as {
+        [Status in keyof ResponseByStatusMap]: {
+          body: ResponseByStatusMap[Status];
+          response: Response;
+        };
       },
-    } as {
-      [Status in keyof ResponseByStatusMap]: {
-        body: ResponseByStatusMap[Status];
-        response: Response;
-      };
-    },
-    response.status
-  );
+      response.status
+    );
+  } catch (err) {
+    if (err instanceof UnexpectedNonExhaustiveMatchError) {
+      throw new UnexpectedHttpResponseError(response);
+    }
+    throw err;
+  }
+};
+
+export class UnexpectedHttpResponseError extends Error {
+  constructor(public response: Response) {
+    super(
+      `Unexpected and unmatched HTTP response ${response.status} ${response.statusText} from ${response.url}`
+    );
+  }
+}

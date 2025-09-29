@@ -1,6 +1,6 @@
 import type { AnyRecord } from "./internal/Types";
 import { getAnyFromAllegedRecord, primitiveArrayIncludes } from "./internal/Utils";
-import type { KeyMatcher } from "./KeyMatchers";
+import { UnexpectedNonExhaustiveMatchError, type KeyMatcher } from "./KeyMatchers";
 
 /**
  * cases keymatcher mapper
@@ -86,9 +86,7 @@ export const total =
       };
     }
 
-    throw new Error(
-      "FATAL: function total is supposed to be exhaustive on record from previousKeyMatcher, but match did not occour."
-    );
+    throw new UnexpectedNonExhaustiveMatchError(previousKeyMatcher.key);
   };
 
 /**
