@@ -1,5 +1,5 @@
 import type { AnyRecord } from "./internal/Types";
-import type { KeyMatcher } from "./KeyMatchers";
+import { UnexpectedNonExhaustiveMatchError, type KeyMatcher } from "./KeyMatchers";
 
 export interface KeyMatcherConstrainedFlow<
   Rec extends AnyRecord,
@@ -55,17 +55,18 @@ export const createKeyMatcherConstrainedFlow =
     key: Key
   ): KeyMatcherConstrainedFlow<Rec, KeyMatcher<Rec, never>> =>
   (...funcs: ((...args: any) => any)[]) => {
-    const match = funcs.reduce((previousResult, currentFn) => currentFn(previousResult), {
-      key,
-      record,
-      match: { status: "keyNotInRecord" },
-    } as KeyMatcher<Rec, never>).match;
+    const { match } = funcs.reduce(
+      (previousResult, currentFn) => currentFn(previousResult),
+      {
+        key,
+        record,
+        match: { status: "keyNotInRecord" },
+      } as KeyMatcher<Rec, never>
+    );
     switch (match.status) {
       case "keyInRecord":
         return match.product;
       default:
-        throw new Error(
-          "FATAL: KeyMatchConstrainedFlow is supposed to be exhaustive, yet no match was made previously."
-        );
+        throw new UnexpectedNonExhaustiveMatchError(key as any);
     }
   };
