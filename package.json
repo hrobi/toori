@@ -1,6 +1,6 @@
 {
   "name": "toori",
-  "version": "0.1.3-alpha",
+  "version": "0.2.0-alpha",
   "description": "An extensible, convinient typescript library for various pattern matching.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,6 +22,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./http": {
+      "types": "./dist/http/index.d.ts",
+      "import": "./dist/http/index.mjs",
+      "require": "./dist/http/index.js"
     }
   },
   "keywords": [
