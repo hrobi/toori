@@ -69,9 +69,11 @@ export const deriveTotal = <
   Tag extends keyof Rec,
   Ret,
   MatcherRecord extends {
-    [Case in Rec[Tag]]: (
+    readonly [Case in Rec[Tag]]: (
       arg: Extract<Rec, Record<Tag, Case>>
     ) => [Ret] extends [never] ? unknown : Ret;
+  } & {
+    readonly [Case in Exclude<keyof MatcherRecord, Rec[Tag]>]: never;
   }
 >(
   previousMatcher: TaggedMatcher<Rec, Ret, Tag>,
@@ -93,7 +95,7 @@ export const deriveTotal = <
     tag: previousMatcher.tag,
     matchResult: {
       match: true,
-      output: matcherRecord[previousMatcher.input[previousMatcher.tag]](
+      output: (matcherRecord[previousMatcher.input[previousMatcher.tag]] as Function)(
         previousMatcher.input as any
       ) as any,
     },
@@ -106,9 +108,11 @@ export const total =
     Tag extends keyof Rec,
     Ret,
     MatcherRecord extends {
-      [Case in Rec[Tag]]: (
+      readonly [Case in Rec[Tag]]: (
         arg: Extract<Rec, Record<Tag, Case>>
       ) => [Ret] extends [never] ? unknown : Ret;
+    } & {
+      readonly [Case in Exclude<keyof MatcherRecord, Rec[Tag]>]: never;
     }
   >(
     matcherRecord: MatcherRecord
