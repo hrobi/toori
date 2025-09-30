@@ -4,7 +4,7 @@ import {
   TaggedMatcherConstrainedFlow,
 } from "../TaggedMatcherConstrainedFlow";
 import { UnexpectedHttpStatusError } from "./Exception";
-import { statusMap, StatusMap } from "./StatusMap";
+import { responseStatusMap, ResponseStatusMap } from "./StatusMaps";
 
 export const matchResolvedResponse =
   <ResponseMap extends { [key in number]: unknown }>({
@@ -18,7 +18,9 @@ export const matchResolvedResponse =
   }): TaggedMatcherConstrainedFlow<
     {
       [StatusCode in keyof ResponseMap]: {
-        status: [StatusCode] extends [keyof StatusMap] ? StatusMap[StatusCode] : never;
+        status: [StatusCode] extends [keyof ResponseStatusMap]
+          ? ResponseStatusMap[StatusCode]
+          : never;
         body: ResponseMap[StatusCode];
         response: Response;
       };
@@ -29,7 +31,7 @@ export const matchResolvedResponse =
     try {
       return createTaggedMatcherConstrainedFlow(
         {
-          status: statusMap[response.status as keyof StatusMap],
+          status: responseStatusMap[response.status as keyof ResponseStatusMap],
           body: response.status >= 200 && response.status < 300 ? data : error,
           response,
         } as any,
